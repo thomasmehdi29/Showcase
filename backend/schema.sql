@@ -1,0 +1,76 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS vendors (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  description TEXT,
+  email TEXT,
+  phone TEXT,
+  website TEXT,
+  imageUrl TEXT,
+  instagramUrl TEXT,
+  facebookUrl TEXT,
+  tiktokUrl TEXT,
+  createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  vendorId INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  startDate TEXT NOT NULL,
+  endDate TEXT NOT NULL,
+  category TEXT NOT NULL,
+  discussionEnabled INTEGER NOT NULL DEFAULT 1,
+  createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (vendorId) REFERENCES vendors(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS locations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  address TEXT,
+  city TEXT,
+  state TEXT,
+  postalCode TEXT,
+  country TEXT NOT NULL DEFAULT 'USA',
+  latitude REAL,
+  longitude REAL,
+  category TEXT,
+  vendorId INTEGER UNIQUE,
+  eventId INTEGER UNIQUE,
+  createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (vendorId) REFERENCES vendors(id) ON DELETE CASCADE,
+  FOREIGN KEY (eventId) REFERENCES events(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS community_posts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  authorName TEXT NOT NULL,
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  category TEXT,
+  createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS event_comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  eventId INTEGER NOT NULL,
+  authorName TEXT NOT NULL,
+  message TEXT NOT NULL,
+  createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (eventId) REFERENCES events(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_comments_event_id_created_at
+ON event_comments (eventId, createdAt DESC);
+
+CREATE INDEX IF NOT EXISTS idx_community_posts_created_at
+ON community_posts (createdAt DESC);
