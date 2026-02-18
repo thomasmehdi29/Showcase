@@ -9,7 +9,7 @@ import VendorDetailPage from "./pages/VendorDetailPage";
 import CreateShowcasePage from "./pages/CreateShowcasePage";
 import EventDetailPage from "./pages/EventDetailPage";
 import CommunityBoardPage from "./pages/CommunityBoardPage";
-import { api } from "./lib/api";
+import { SHOWCASE_DATA_CHANGED_EVENT, api } from "./lib/api";
 
 function NotFoundPage() {
   return (
@@ -44,6 +44,17 @@ export default function App() {
 
   useEffect(() => {
     loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    function handleDataChanged() {
+      loadData();
+    }
+
+    window.addEventListener(SHOWCASE_DATA_CHANGED_EVENT, handleDataChanged);
+    return () => {
+      window.removeEventListener(SHOWCASE_DATA_CHANGED_EVENT, handleDataChanged);
+    };
   }, [loadData]);
 
   return (
